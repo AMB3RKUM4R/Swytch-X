@@ -1,22 +1,23 @@
 import type { Metadata, Viewport } from "next"
-import { env } from "@/env.js"
-import { ClerkProvider } from "@clerk/nextjs"
 
+// Styles and fonts are essential for the UI, so we keep them.
 import "@/styles/globals.css"
-
 import { GeistMono } from "geist/font/mono"
 import { GeistSans } from "geist/font/sans"
 
+// Local configuration and utilities for UI are also kept.
 import { siteConfig } from "@/config/site"
-import { fontHeading } from "@/lib/fonts"
-import { absoluteUrl, cn } from "@/lib/utils"
 import { Toaster } from "@/components/ui/toaster"
-import { Analytics } from "@/components/analytics"
 import { ThemeProvider } from "@/components/providers"
 import { TailwindIndicator } from "@/components/tailwind-indicator"
 
+// The 'env' import has been removed to decouple the layout from environment variables.
+// The 'Analytics' component has also been removed.
+
 export const metadata: Metadata = {
-  metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
+  // The metadataBase is now hardcoded.
+  // You can change "http://localhost:3000" to your actual domain when you deploy.
+  metadataBase: new URL("http://localhost:3000"),
   title: {
     default: siteConfig.name,
     template: `%s - ${siteConfig.name}`,
@@ -55,7 +56,8 @@ export const metadata: Metadata = {
   icons: {
     icon: "/icon.png",
   },
-  manifest: absoluteUrl("/site.webmanifest"),
+  // The `absoluteUrl` helper has been removed for a simpler relative path.
+  manifest: "/site.webmanifest",
 }
 
 export const viewport: Viewport = {
@@ -72,30 +74,21 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
-        <head />
-        <body
-          className={cn(
-            "min-h-screen bg-background font-sans antialiased",
-            GeistSans.variable,
-            GeistMono.variable,
-            fontHeading.variable
-          )}
+    <html lang="en" suppressHydrationWarning>
+      <head />
+      <body>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
         >
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-            <TailwindIndicator />
-            <Analytics />
-          </ThemeProvider>
-          <Toaster />
-        </body>
-      </html>
-    </ClerkProvider>
+          {children}
+          <TailwindIndicator />
+          {/* The Analytics component has been removed from here */}
+        </ThemeProvider>
+        <Toaster />
+      </body>
+    </html>
   )
 }
